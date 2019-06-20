@@ -7,7 +7,7 @@
 class spiReader {
   private:
   protected:
-    hwlib::target::pin_out nss;
+    hwlib::target::pin_out & nss;
     hwlib::spi_bus_bit_banged_sclk_mosi_miso spiBus;
   public:
     spiReader(

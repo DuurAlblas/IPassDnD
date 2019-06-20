@@ -16,13 +16,29 @@ int main(){
   auto spiBus = hwlib::spi_bus_bit_banged_sclk_mosi_miso(sclk, mosi, miso);
   auto nss = hwlib::target::pin_out(hwlib::target::pins::d11);
 
+  auto testWindow = hwlib::target::pin_out(hwlib::target::pins::d12);
+
   rc522 newReader = rc522(nss,spiBus);
 
-  newReader.writeCommand(rc522::test::TestPinEnReg, 2);
-  newReader.writeCommand(rc522::test::TestPinValueReg, 130);
-  hwlib::wait_ms(1000);
-  newReader.writeCommand(rc522::test::TestPinValueReg, 128);
-
   hwlib::cout << "Compiled" << hwlib::endl;
+
+  hwlib::cout << "Try SoftReset" << hwlib::endl;
+  newReader.writeReg(rc522::registers::CommandReg, 0b00001111);
+
+  hwlib::cout << "TestPinEnReg" << hwlib::endl;
+  newReader.readReg(rc522::test::TestPinEnReg);
+  newReader.writeReg(rc522::test::TestPinEnReg, 0b01111110);
+  newReader.readReg(rc522::test::TestPinEnReg);
+
+  hwlib::cout << "TestPinValueReg" << hwlib::endl;
+  newReader.readReg(rc522::test::TestPinValueReg);
+  newReader.writeReg(rc522::test::TestPinValueReg, 0b10101010);
+  newReader.readReg(rc522::test::TestPinValueReg);
+  newReader.writeReg(rc522::test::TestPinValueReg, 0b10111100);
+  newReader.readReg(rc522::test::TestPinValueReg);
+
+  hwlib::wait_ms(500);
+
+
   return 0;
 }

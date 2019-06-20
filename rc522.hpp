@@ -7,6 +7,8 @@
 
 class rc522 : public spiReader {
   private:
+    uint8_t read(const uint8_t regAddr);
+    void write(const uint8_t regAddr,const uint8_t data);
   protected:
   public:
     enum class registers {
@@ -95,11 +97,14 @@ class rc522 : public spiReader {
     );
 
     uint8_t readReg(rc522::commands regAddr);
+    uint8_t readReg(rc522::registers regAddr);
+    uint8_t readReg(rc522::configuration regAddr);
+    uint8_t readReg(rc522::test regAddr);
 
-    void writeCommand(rc522::test regAddr, uint8_t data);
-
+    void writeReg(rc522::commands regAddr, uint8_t data);
+    void writeReg(rc522::registers regAddr, uint8_t data);
+    void writeReg(rc522::configuration regAddr, uint8_t data);
+    void writeReg(rc522::test regAddr, uint8_t data);
 };
-
-
 
 #endif
