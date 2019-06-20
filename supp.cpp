@@ -8,6 +8,3 @@ void bitPrint(uint8_t a){
   hwlib::cout << hwlib::endl;
 }
 
-void bitPrintArr2(std::array<uint8_t,2> arr, char identifier){
-  hwlib::cout << identifier << hwlib::endl;
-}

@@ -1,9 +1,24 @@
-// #include "hwlib.hpp"
-// #include "../../hwlib/library/hwlib.hpp"
-//#include "reader.hpp"
 #include "supp.hpp"
 #include "rc522.hpp"
 #include "deco.hpp"
+
+//A function that test whether i can read/write to/from registers
+void writeReadTest(rc522 & reader){
+  hwlib::cout << "Try SoftReset" << hwlib::endl;
+  reader.writeReg(rc522::registers::CommandReg, 0b00001111);
+
+  hwlib::cout << "TestPinEnReg" << hwlib::endl;
+  reader.readReg(rc522::test::TestPinEnReg);
+  reader.writeReg(rc522::test::TestPinEnReg, 0b01111110);
+  reader.readReg(rc522::test::TestPinEnReg);
+
+  hwlib::cout << "TestPinValueReg" << hwlib::endl;
+  reader.readReg(rc522::test::TestPinValueReg);
+  reader.writeReg(rc522::test::TestPinValueReg, 0b10101010);
+  reader.readReg(rc522::test::TestPinValueReg);
+  reader.writeReg(rc522::test::TestPinValueReg, 0b10111100);
+  reader.readReg(rc522::test::TestPinValueReg);
+}
 
 int main(){
   // Wait so hwlib::cout works
@@ -16,29 +31,10 @@ int main(){
   auto spiBus = hwlib::spi_bus_bit_banged_sclk_mosi_miso(sclk, mosi, miso);
   auto nss = hwlib::target::pin_out(hwlib::target::pins::d11);
 
-  auto testWindow = hwlib::target::pin_out(hwlib::target::pins::d12);
-
+  // Program
   rc522 newReader = rc522(nss,spiBus);
+  newReader.selfTest();
 
   hwlib::cout << "Compiled" << hwlib::endl;
-
-  hwlib::cout << "Try SoftReset" << hwlib::endl;
-  newReader.writeReg(rc522::registers::CommandReg, 0b00001111);
-
-  hwlib::cout << "TestPinEnReg" << hwlib::endl;
-  newReader.readReg(rc522::test::TestPinEnReg);
-  newReader.writeReg(rc522::test::TestPinEnReg, 0b01111110);
-  newReader.readReg(rc522::test::TestPinEnReg);
-
-  hwlib::cout << "TestPinValueReg" << hwlib::endl;
-  newReader.readReg(rc522::test::TestPinValueReg);
-  newReader.writeReg(rc522::test::TestPinValueReg, 0b10101010);
-  newReader.readReg(rc522::test::TestPinValueReg);
-  newReader.writeReg(rc522::test::TestPinValueReg, 0b10111100);
-  newReader.readReg(rc522::test::TestPinValueReg);
-
-  hwlib::wait_ms(500);
-
-
   return 0;
 }

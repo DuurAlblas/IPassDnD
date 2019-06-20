@@ -10,6 +10,11 @@ class rc522 : public spiReader {
     uint8_t read(const uint8_t regAddr);
     void write(const uint8_t regAddr,const uint8_t data);
   protected:
+    enum class version{
+      error = 0,
+      version1,
+      version2
+    };
   public:
     enum class registers {
       // Command and Status
@@ -105,6 +110,10 @@ class rc522 : public spiReader {
     void writeReg(rc522::registers regAddr, uint8_t data);
     void writeReg(rc522::configuration regAddr, uint8_t data);
     void writeReg(rc522::test regAddr, uint8_t data);
+
+    rc522::version compareVersion(std::array<uint8_t,64> buffer);
+
+    void selfTest();
 };
 
 #endif
