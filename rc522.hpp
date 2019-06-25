@@ -7,8 +7,8 @@
 
 class rc522 : public spiReader {
   private:
-    uint8_t read(const uint8_t regAddr);
-    void write(const uint8_t regAddr,const uint8_t data);
+    uint8_t read( const uint8_t regAddr);
+    void write(   const uint8_t regAddr, const uint8_t data);
   protected:
     enum class version{
       error = 0,
@@ -34,6 +34,20 @@ class rc522 : public spiReader {
       BitFramingReg         = 0x0D,
       CollReg               = 0x0E,
       Reserved_0F           = 0x0F
+    };
+
+    enum class regCommands {
+      Idle                  = 0x00,
+      Mem                   = 0x01,
+      GenerateRandomID      = 0x02,
+      CalcCRC               = 0x03,
+      Transmit              = 0x04,
+      NoCmdChange           = 0x07,
+      Receive               = 0x08,
+      Transceive            = 0x0C,
+      Reserved              = 0x0D,
+      MFAuthent             = 0x0E,
+      SoftReset             = 0x0F
     };
 
     enum class commands {
@@ -101,15 +115,32 @@ class rc522 : public spiReader {
       hwlib::spi_bus_bit_banged_sclk_mosi_miso & spiBusInput
     );
 
-    uint8_t readReg(rc522::commands regAddr);
-    uint8_t readReg(rc522::registers regAddr);
-    uint8_t readReg(rc522::configuration regAddr);
-    uint8_t readReg(rc522::test regAddr);
+    uint8_t readReg(      rc522::commands       regAddr);
+    uint8_t readReg(      rc522::registers      regAddr);
+    uint8_t readReg(      rc522::configuration  regAddr);
+    uint8_t readReg(      rc522::test           regAddr);
 
-    void writeReg(rc522::commands regAddr, uint8_t data);
-    void writeReg(rc522::registers regAddr, uint8_t data);
-    void writeReg(rc522::configuration regAddr, uint8_t data);
-    void writeReg(rc522::test regAddr, uint8_t data);
+    void writeReg(        rc522::commands       regAddr, uint8_t data);
+    void writeReg(        rc522::registers      regAddr, uint8_t data);
+    void writeReg(        rc522::configuration  regAddr, uint8_t data);
+    void writeReg(        rc522::test           regAddr, uint8_t data);
+    void writeReg(        rc522::registers      regAddr, rc522::regCommands data);
+
+    void setRegBitMask(   rc522::commands       regAddr, uint8_t mask);
+    void setRegBitMask(   rc522::registers      regAddr, uint8_t mask);
+    void setRegBitMask(   rc522::configuration  regAddr, uint8_t mask);
+    void setRegBitMask(   rc522::test           regAddr, uint8_t mask);
+
+    void unsetRegBitMask( rc522::commands       regAddr, uint8_t mask);
+    void unsetRegBitMask( rc522::registers      regAddr, uint8_t mask);
+    void unsetRegBitMask( rc522::configuration  regAddr, uint8_t mask);
+    void unsetRegBitMask( rc522::test           regAddr, uint8_t mask);
+
+    void antennaOn(bool feedback);
+    void antennaOff(bool feedback);
+
+    void softReset();
+    void initialize();
 
     rc522::version compareVersion(std::array<uint8_t,64> buffer);
 

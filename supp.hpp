@@ -2,6 +2,7 @@
 #define SUPP_HPP
 
 #include <hwlib.hpp>
+#include "rc522.hpp"
 
 void bitPrint(uint8_t a);
 

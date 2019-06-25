@@ -33,6 +33,106 @@ void rc522::writeReg(rc522::registers regAddr, uint8_t data)      {write(static_
 void rc522::writeReg(rc522::configuration regAddr, uint8_t data)  {write(static_cast<uint8_t>(regAddr), data);}
 void rc522::writeReg(rc522::test regAddr, uint8_t data)           {write(static_cast<uint8_t>(regAddr), data);}
 
+void rc522::writeReg(rc522::registers regAddr, rc522::regCommands data){
+  write(
+    static_cast<uint8_t>(regAddr), 
+    static_cast<uint8_t>(data)
+  );
+}
+
+void rc522::setRegBitMask(rc522::commands regAddr, uint8_t mask){
+  uint8_t tmp = read(static_cast<uint8_t>(regAddr));
+  write(static_cast<uint8_t>(regAddr),tmp|mask);
+}
+
+void rc522::setRegBitMask(rc522::registers regAddr, uint8_t mask){
+  uint8_t tmp = read(static_cast<uint8_t>(regAddr));
+  write(static_cast<uint8_t>(regAddr),tmp|mask);
+}
+
+void rc522::setRegBitMask(rc522::configuration regAddr, uint8_t mask){
+  uint8_t tmp = read(static_cast<uint8_t>(regAddr));
+  write(static_cast<uint8_t>(regAddr),tmp|mask);
+}
+
+void rc522::setRegBitMask(rc522::test regAddr, uint8_t mask){
+  uint8_t tmp = read(static_cast<uint8_t>(regAddr));
+  write(static_cast<uint8_t>(regAddr),tmp|mask);
+}
+
+void rc522::unsetRegBitMask(rc522::commands regAddr, uint8_t mask){
+  uint8_t tmp = read(static_cast<uint8_t>(regAddr));
+  write(static_cast<uint8_t>(regAddr),tmp&(~mask));
+}
+
+void rc522::unsetRegBitMask(rc522::registers regAddr, uint8_t mask){
+  uint8_t tmp = read(static_cast<uint8_t>(regAddr));
+  write(static_cast<uint8_t>(regAddr),tmp&(~mask));
+}
+
+void rc522::unsetRegBitMask(rc522::configuration regAddr, uint8_t mask){
+  uint8_t tmp = read(static_cast<uint8_t>(regAddr));
+  write(static_cast<uint8_t>(regAddr),tmp&(~mask));
+}
+
+void rc522::unsetRegBitMask(rc522::test regAddr, uint8_t mask){
+  uint8_t tmp = read(static_cast<uint8_t>(regAddr));
+  write(static_cast<uint8_t>(regAddr),tmp&(~mask));
+}
+
+void rc522::antennaOn(bool feedback = false){
+  if (feedback){
+    hwlib::cout << "Initial state: ";
+    bitPrint(readReg(rc522::commands::TxControlReg));
+  }
+  setRegBitMask(rc522::commands::TxControlReg, 0x03);
+  if (feedback){
+    hwlib::cout << "Renewed state: ";
+    bitPrint(readReg(rc522::commands::TxControlReg));
+  }
+}
+
+void rc522::antennaOff(bool feedback = false){
+  if (feedback){
+    hwlib::cout << "Initial state: ";
+    bitPrint(readReg(rc522::commands::TxControlReg));
+  }
+  unsetRegBitMask(rc522::commands::TxControlReg, 0x03);
+  if (feedback){
+    hwlib::cout << "Renewed state: ";
+    bitPrint(readReg(rc522::commands::TxControlReg));
+  }
+}
+
+void rc522::softReset(){
+  writeReg(rc522::registers::CommandReg, rc522::regCommands::SoftReset);
+  uint8_t loop = 0;
+  do {
+    hwlib::wait_ms(25);
+    loop++;
+  } while (loop < 10 && (readReg(rc522::registers::CommandReg) & (1 << 4)));  
+}
+
+
+void rc522::initialize(){
+  //First do a soft reset
+  softReset();
+
+  //Reset the baud rates and the modulation with
+  writeReg(rc522::commands::TxModeReg, 0x00);
+  writeReg(rc522::commands::RxModeReg, 0x00);
+  writeReg(rc522::configuration::ModWidthReg, 0x26);
+
+  //Configure time out values in case things go wrong
+  writeReg(rc522::configuration::TModeReg, 0x80); // Timer start automatically after all forms of commincation
+  writeReg(rc522::configuration::TPrescalerReg, 0xA9); // 0xA9 == 169, a timer period of 25 us
+  writeReg(rc522::configuration::TReloadReg_High, 0x03); // 0x03E8 == 1000, 25ms before we time out
+  writeReg(rc522::configuration::TReloadReg_Low, 0xE8);
+  writeReg(rc522::commands::TxASKReg, 0x40); // Force100ASK
+  writeReg(rc522::commands::ModeReg, 0x3D); // CRC doesnt calc with MSBF and CRCPreset is 6363h
+  antennaOn(); // soft reset turned them off
+}
+
 rc522::version rc522::compareVersion(std::array<uint8_t, 64> buffer){
     std::array<uint8_t,64> version1 = { 0x00, 0xC6, 0x37, 0xD5, 0x32, 0xB7, 0x57, 0x5C,
                                       0xC2, 0xD8, 0x7C, 0x4D, 0xD9, 0x70, 0xC7, 0x73,

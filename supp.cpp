@@ -7,4 +7,3 @@ void bitPrint(uint8_t a){
   }
   hwlib::cout << hwlib::endl;
 }
-
