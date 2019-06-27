@@ -141,10 +141,10 @@ void checkNewCardREQA(rc522 & reader){
   uint16_t i;
 	for (i = 2000; i > 0; i--) {
 		uint8_t n = reader.readReg(rc522::registers::ComIrqReg);
-		if (n & waitIRQ) {					
+		if (n & waitIRQ) {
 			break;
 		}
-		if (n & 0x01) {	
+		if (n & 0x01) {
       hwlib::cout << "Time Out: Nothing received" << hwlib::endl;
 			return;
 		}
@@ -155,15 +155,15 @@ void checkNewCardREQA(rc522 & reader){
 		return;
 	}
 
-  uint8_t errorRegValue = reader.readReg(rc522::registers::ErrorReg); 
-	if (errorRegValue & 0x13) {	
+  uint8_t errorRegValue = reader.readReg(rc522::registers::ErrorReg);
+	if (errorRegValue & 0x13) {
     hwlib::cout << "Error other than collision" << hwlib::endl;
 		return;
 	}
 
-    
+
 	uint8_t _validBits = 0;
-	
+
 	// If the caller wants data back, get it from the MFRC522.
 
   uint8_t n = reader.readReg(rc522::registers::FIFOLevelReg);
@@ -176,7 +176,7 @@ void checkNewCardREQA(rc522 & reader){
 
   for (uint8_t i = 0; i < bufATQASize; i++){
     bufATQA[i] = reader.readReg(rc522::registers::FIFODataReg);
-  }    
+  }
 
   _validBits = reader.readReg(rc522::registers::ControlReg) & 0x07;
   //PCD_ReadRegister(ControlReg) & 0x07;		// RxLastBits[2:0] indicates the number of valid bits in the last received byte. If this value is 000b, the whole byte is valid.
@@ -188,6 +188,41 @@ void checkNewCardREQA(rc522 & reader){
 
   hwlib::cout << "Succesfull !" << hwlib::endl;
   return;
+}
+
+void outputStatus(rc522::status recStatus){
+  switch (recStatus){
+  case rc522::status::SUCCESS:
+    hwlib::cout << "Succes" << hwlib::endl;
+    break;
+  case rc522::status::SUCCESS_NEWC:
+    hwlib::cout << "Welcome new card!" << hwlib::endl;
+    break;
+  case rc522::status::SUCCESS_OLDC:
+    hwlib::cout << "Welcome old card!" << hwlib::endl;
+    break;
+  case rc522::status::ERROR:
+    hwlib::cout << "Error" << hwlib::endl;
+    break;
+  case rc522::status::NO_SPACE:
+    hwlib::cout << "No space" << hwlib::endl;
+    break;
+  case rc522::status::TIMEOUTCOM:
+    hwlib::cout << "Time out Communication" << hwlib::endl;
+    break;
+  case rc522::status::TIMEOUTDEV:
+    hwlib::cout << "Time out device" << hwlib::endl;
+    break;
+  case rc522::status::CRC_ERROR:
+    hwlib::cout << "CRC Error" << hwlib::endl;
+    break;
+  case rc522::status::CRC_SUCCESS:
+    hwlib::cout << "CRC Success" << hwlib::endl;
+    break;
+  default:
+    hwlib::cout << "You're a special snowflake.\n";
+    break;
+  }
 }
 
 int main(){
@@ -203,10 +238,27 @@ int main(){
 
   // Program
   rc522 newReader = rc522(nss,spiBus);
+  // if (newReader.selfTest() == rc522::status::ERROR){
+  //   return 0;
+  // }
   newReader.initialize();
-  //newReader.selfTest();
 
-  checkNewCardREQA(newReader);
+  //Send a Request
+  while (true){
+    if (newReader.wakeCard(mifare::command::request) == rc522::status::SUCCESS){
+      hwlib::cout << "Welcome New Card!" << hwlib::endl;
+      break;
+    } else if (newReader.wakeCard(mifare::command::wakeup) == rc522::status::SUCCESS){
+      hwlib::cout << "Welcome Old Card!" << hwlib::endl;
+      break;
+    }
+    printPatience(5);
+  }
+
+  rc522::status cardSelected = newReader.selectCard();
+  outputStatus(cardSelected);
+
+  // read manufactor block
 
   hwlib::cout << "Compiled" << hwlib::endl;
   return 0;

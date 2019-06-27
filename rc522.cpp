@@ -35,7 +35,7 @@ void rc522::writeReg(rc522::test regAddr, uint8_t data)           {write(static_
 
 void rc522::writeReg(rc522::registers regAddr, rc522::regCommands data){
   write(
-    static_cast<uint8_t>(regAddr), 
+    static_cast<uint8_t>(regAddr),
     static_cast<uint8_t>(data)
   );
 }
@@ -110,7 +110,7 @@ void rc522::softReset(){
   do {
     hwlib::wait_ms(25);
     loop++;
-  } while (loop < 10 && (readReg(rc522::registers::CommandReg) & (1 << 4)));  
+  } while (loop < 10 && (readReg(rc522::registers::CommandReg) & (1 << 4)));
 }
 
 
@@ -161,35 +161,68 @@ rc522::version rc522::compareVersion(std::array<uint8_t, 64> buffer){
   }
 }
 
-void rc522::selfTest(){
+// Steps to perfom the self test:
+//  1: Perform Soft Reset
+//  2: Clear the internal buffer by writing 25 bytes of 00h and implement the Config command
+//  3: Enable the self test by writing 09h to the AutoTestReg register
+//  4: Write 00h to the FIFO buffer
+//  5: Start the self test with the CalcCRC command
+//  6: The self test is initiated
+//  7: When the self test has completed, the FIFO buffer contains the following 64 bytes
+rc522::status rc522::selfTest(){
   std::array<uint8_t,64> myBuffer = { 0x00 };
-  //1: Perform Soft Reset
   writeReg(rc522::registers::CommandReg, 0x0F);
   hwlib::wait_ms(2500);
-  //2: Clear the internal buffer by writing 25 bytes of 00h and implement the Config command
   for (uint8_t i = 0; i < 25; i++){ writeReg(rc522::registers::FIFODataReg,0x00);}
   writeReg(rc522::registers::CommandReg, 0x01);
-  //3: Enable the self test by writing 09h to the AutoTestReg register
   writeReg(rc522::test::AutoTestReg, 0x09);
-  //4: Write 00h to the FIFO buffer
   writeReg(rc522::registers::FIFODataReg,0x00);
-  //5: Start the self test with the CalcCRC command
   writeReg(rc522::registers::CommandReg,0x03);
-  //6: The self test is initiated
-  //7: When the self test has completed, the FIFO buffer contains the following 64 bytes
   hwlib::wait_ms(2500);
   uint8_t amountBytes = readReg(rc522::registers::FIFOLevelReg);
   for (uint8_t i = 0; i < amountBytes; i++){ myBuffer[i] = readReg(rc522::registers::FIFODataReg);}
-  hexPrintArr(myBuffer);
   switch (compareVersion(myBuffer)){
   case rc522::version::version1:
-    hwlib::cout << "Version 1 not supported.\n";
+    hwlib::cout << "Chip version 1 not supported.\n";
     break;
   case rc522::version::version2:
-    hwlib::cout << "Version 2 is supported!\n";
+    hwlib::cout << "Chip version 2 is supported!\n";
+    return rc522::status::SUCCESS;
     break;
   default:
     hwlib::cout << "You're a special snowflake.\n";
     break;
   }
+  return rc522::status::ERROR;
+}
+
+rc522::status rc522::wakeCard(mifare::command comData){
+  std::array<uint8_t,2> bufReceive = {};
+  uint8_t bitFraming = 7;
+  std::array<uint8_t,1> bufSend = {static_cast<uint8_t>(comData)};
+  return cardTransceive(bufSend,bufReceive,bitFraming);
+}
+
+rc522::status rc522::selectCard(){
+  //Send Col 1 to get NUID
+  std::array<mifare::command, 2> bufCol = {mifare::command::cl1, mifare::command::anticol};
+  std::array<uint8_t, 5> bufColReceive = {};
+  if (cardTransceive(bufCol, bufColReceive) != rc522::status::SUCCESS ){
+    return rc522::status::ERROR;
+  }
+  uint8_t bcc = bufColReceive[0] ^ bufColReceive[1] ^ bufColReceive[2] ^ bufColReceive[3];
+  if (bcc != bufColReceive[4]){
+    return rc522::status::ERROR;
+  }
+
+  //Send Select to card
+  std::array<uint8_t, 7> bufCrc = {0x93,0x70,bufColReceive[0],bufColReceive[1],bufColReceive[2],bufColReceive[3],bcc};
+  std::array<uint8_t, 9> bufSel = {};
+  std::copy(begin(bufCrc), end(bufCrc), begin(bufSel));
+  rc522::status calcStatus = calcCRC(bufCrc,bufSel);
+  if (calcStatus != rc522::status::SUCCESS){
+    return calcStatus;
+  }
+  std::array<uint8_t, 16> bufSelReceive = {};
+  return cardTransceive(bufSel, bufSelReceive,0,true);
 }
