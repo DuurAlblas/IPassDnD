@@ -203,7 +203,7 @@ rc522::status rc522::wakeCard(mifare::command comData){
   return cardTransceive(bufSend,bufReceive,bitFraming);
 }
 
-rc522::status rc522::selectCard(){
+rc522::status rc522::selectCard(mifare::card & curCard){
   //Send Col 1 to get NUID
   std::array<mifare::command, 2> bufCol = {mifare::command::cl1, mifare::command::anticol};
   std::array<uint8_t, 5> bufColReceive = {};
@@ -214,15 +214,69 @@ rc522::status rc522::selectCard(){
   if (bcc != bufColReceive[4]){
     return rc522::status::ERROR;
   }
+  std::copy(
+    begin(bufColReceive),
+    std::prev(end(bufColReceive)),
+    begin(curCard.uid)
+  );
 
   //Send Select to card
-  std::array<uint8_t, 7> bufCrc = {0x93,0x70,bufColReceive[0],bufColReceive[1],bufColReceive[2],bufColReceive[3],bcc};
+  std::array<uint8_t, 7> bufCrc = {
+    static_cast<uint8_t>(mifare::command::cl1),
+    static_cast<uint8_t>(mifare::command::select)
+  };
+  std::copy(
+    begin(bufColReceive),
+    end(bufColReceive),
+    std::next(begin(bufCrc),2)
+  );
   std::array<uint8_t, 9> bufSel = {};
-  std::copy(begin(bufCrc), end(bufCrc), begin(bufSel));
+  std::copy(
+    begin(bufCrc),
+    end(bufCrc),
+    begin(bufSel)
+  );
   rc522::status calcStatus = calcCRC(bufCrc,bufSel);
   if (calcStatus != rc522::status::SUCCESS){
     return calcStatus;
   }
   std::array<uint8_t, 16> bufSelReceive = {};
   return cardTransceive(bufSel, bufSelReceive,0,true);
+}
+
+rc522::status rc522::authenticateCard(mifare::command comData, uint8_t blockAddr, mifare::card cardData){
+  if (blockAddr > cardData.maxBlocks){
+    return rc522::status::NO_SPACE;
+  }
+  uint8_t waitIrq = 0x10;
+  std::array<uint8_t, 12> bufAuth = {
+    static_cast<uint8_t>(comData),
+    blockAddr
+  };
+  if (comData == mifare::command::authKA){
+    std::copy(
+      begin(cardData.keyA),
+      end(cardData.keyA),
+      std::next(begin(bufAuth),2)
+    );
+  } else if (comData == mifare::command::authKB){
+    std::copy(
+      begin(cardData.keyB),
+      end(cardData.keyB),
+      std::next(begin(bufAuth),2)
+    );
+  } else {
+    return rc522::status::ERROR;
+  }
+  std::copy(
+    begin(cardData.uid),
+    end(cardData.uid),
+    std::next(begin(bufAuth),8)
+  );
+  std::array<uint8_t,3> bufAuthReceive = {};
+  return cardCommunication(bufAuth,bufAuthReceive,rc522::regCommands::MFAuthent,0,waitIrq);
+}
+
+void rc522::stopCrypto(){
+  unsetRegBitMask(rc522::registers::Status2Reg, 0x08);
 }

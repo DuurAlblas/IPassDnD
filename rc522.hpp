@@ -154,14 +154,25 @@ class rc522 : public spiReader {
     rc522::status selfTest();
 
     template<unsigned int N1,unsigned int N2>
-    rc522::status calcCRC(std::array<uint8_t, N1> & dataIn, std::array<uint8_t, N2> & dataOut) {
+    rc522::status calcCRC(std::array<uint8_t, N1> & dataIn, std::array<uint8_t, N2> & dataOut, bool containsCrc = false) {
       if (N2 < 2){
         return rc522::status::NO_SPACE;
       }
+      std::array<uint8_t, (N1-2)> smallerIn = {};
+      if (containsCrc){
+        //hexPrintArr(dataIn);
+        std::copy(begin(dataIn),std::prev(end(dataIn),2), begin(smallerIn));
+        //hexPrintArr(smallerIn);
+      }
+
       writeReg(rc522::registers::CommandReg, rc522::regCommands::Idle);       // Command Idle
       writeReg(rc522::registers::DivIrqReg, 0x04);                            // DivIrqReg 0x04 to clear the CRCIrq bit
       writeReg(rc522::registers::FIFOLevelReg, 0x80);                         // FIFOLevelReg 0x80 to empty the buffer
-      writeReg(rc522::registers::FIFODataReg, dataIn);                        // FIFODataReg, data to write the data to the buffer
+      if (containsCrc){
+        writeReg(rc522::registers::FIFODataReg, smallerIn);
+      } else {
+        writeReg(rc522::registers::FIFODataReg, dataIn);                        // FIFODataReg, data to write the data to the buffer
+      }
       writeReg(rc522::registers::CommandReg, rc522::regCommands::CalcCRC);    // CommandReg calcCRC to start the calc
 
       for (uint16_t i = 5000; i > 0; i--) {
@@ -170,6 +181,7 @@ class rc522 : public spiReader {
           writeReg(rc522::registers::CommandReg, rc522::regCommands::Idle);   // Stop the calc for new data
           dataOut[(dataOut.size()-2)] = readReg(rc522::configuration::CRCResultReg_Low);       // put the results in the last 2 bytes of dataOut
           dataOut[(dataOut.size()-1)] = readReg(rc522::configuration::CRCResultReg_High);
+          //hexPrintArr(dataOut);
           return rc522::status::SUCCESS;
         }
       }
@@ -231,7 +243,7 @@ class rc522 : public spiReader {
         if (bufReceive.size() < 2 || _validBits != 0) {return rc522::status::CRC_ERROR;} // We need the CRC value and the 8 bits of the last byte
         // do the calculation and save it
         std::array<uint8_t,2> calcBuf = {};
-        rc522::status caclStatus = calcCRC(bufReceive, calcBuf);
+        rc522::status caclStatus = calcCRC(bufReceive, calcBuf,true);
         if (caclStatus != rc522::status::SUCCESS) {
           return caclStatus;
         }
@@ -289,8 +301,74 @@ class rc522 : public spiReader {
       return cardTransceive(bufSend,bufReceive,bitFraming);
     }
 
-    rc522::status selectCard();
+    rc522::status selectCard(mifare::card & curCard);
 
+    rc522::status authenticateCard(mifare::command comData, uint8_t blockAddr, mifare::card cardData);
+    void stopCrypto();
+
+    template<unsigned int N>
+    rc522::status readBlock(uint8_t blockAddr, std::array<uint8_t,N> & bufReceive){
+      rc522::status fStatus;
+      if ( N < 18){
+        return rc522::status::NO_SPACE;
+      }
+      std::array<uint8_t, 2> bufCom = {
+        static_cast<uint8_t>(mifare::command::read),
+        blockAddr
+      };
+      std::array<uint8_t,4>bufSend = {bufCom[0],bufCom[1]};
+      fStatus = calcCRC(bufCom,bufSend);
+      if (fStatus != rc522::status::SUCCESS){return fStatus;}
+      return cardTransceive(bufSend,bufReceive,0,true);
+    }
+
+    template<unsigned int N>
+    rc522::status writeBlock(uint8_t blockAddr, std::array<uint8_t,N> & dataSend){
+      rc522::status fStatus;
+      std::array<uint8_t,18> bufReceive = {};
+      // Check if there isnt too much data being send
+      if ( N > 16){
+        return rc522::status::NO_SPACE;
+      }
+
+      //Create the buffer containing the command to execute and the CRC
+      std::array<uint8_t, 2> bufCom = {
+        static_cast<uint8_t>(mifare::command::write),
+        blockAddr
+      };
+      std::array<uint8_t,4>bufSendCom = {bufCom[0],bufCom[1]};
+      fStatus = calcCRC(bufCom,bufSendCom);
+      if (fStatus != rc522::status::SUCCESS){return fStatus;}
+      fStatus = cardTransceive(bufSendCom,bufReceive);
+      if (fStatus != rc522::status::SUCCESS){return fStatus;}
+
+      //Give it time to return the ACK
+      hwlib::wait_ms(1);
+
+
+      //Create the buffer containing the data to send and the CRC
+      std::array<uint8_t,(N+2)>bufSendData = {};
+      std::copy(begin(dataSend),end(dataSend),begin(bufSendData));
+      fStatus = calcCRC(dataSend,bufSendData);
+      if (fStatus != rc522::status::SUCCESS){return fStatus;}
+      return cardTransceive(bufSendData,bufReceive);
+    }
+
+    template<typename F>
+    rc522::status tryFunction(F f , uint8_t tryFor = 10){
+      uint8_t countTries = 0;
+      rc522::status functionStatus;
+      while( countTries < tryFor){
+         functionStatus = f();
+        if (functionStatus != rc522::status::SUCCESS){
+          printPatience(3);
+          countTries++;
+        } else if (functionStatus == rc522::status::SUCCESS){
+          return functionStatus ;
+        }
+      }
+      return functionStatus;
+    }
 };
 
 #endif

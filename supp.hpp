@@ -4,6 +4,21 @@
 #include <hwlib.hpp>
 
 namespace mifare{
+  class card{
+    public:
+    std::array<uint8_t,4> uid;
+    std::array<uint8_t,6> keyA;
+    std::array<uint8_t,6> keyB;
+    uint8_t maxBlocks;
+    card(
+      std::array<uint8_t,4> uid,
+      std::array<uint8_t,6> keyA,
+      std::array<uint8_t,6> keyB,
+      uint8_t maxBlocks
+    );
+    card();
+  };
+
   enum class type : uint8_t {
     MF1S500yX = 0x44,
     MF1S503yX = 0x04,
