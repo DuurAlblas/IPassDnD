@@ -117,3 +117,17 @@ void demo(rc522::status & fStatus, rc522 & reader, mifare::card & card, uint8_t 
     reader.stopCrypto();
    }
 }
+
+sheet testSheet(){
+  std::array<char,33> characterName = {'H','e','n','k'};
+  std::array<char,17> characterHairColor = {'B','r','o','w','n'};
+  sheet myCharater = sheet(
+    characterName,
+    characterHairColor,
+    dnd::races::Human,
+    dnd::profesions::Rogue,
+    dnd::allignments::Neutral,
+    {dnd::languages::Common,dnd::languages::Dwarvish}
+  );
+  return myCharater;
+}

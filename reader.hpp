@@ -64,7 +64,8 @@ class spiReader {
       TIMEOUT,
       NO_SPACE,
       CRC_ERROR,
-      CRC_SUCCESS
+      CRC_SUCCESS,
+      READY
     };
 };
 

@@ -15,6 +15,7 @@
 
 #include "supp.hpp"
 #include "reader.hpp"
+#include "application.hpp"
 
 ///\brief
 ///rc522 chip class inherits from spiReader
@@ -598,6 +599,55 @@ class rc522 : public spiReader {
       if (fStatus != rc522::status::SUCCESS){return fStatus;}
       return cardTransceive(bufSendData,bufReceive);
     }
+
+    template<unsigned int N>
+    rc522::status executeRead(uint8_t block, std::array<uint8_t, N> & receiveBuf, mifare::card & card){
+      rc522::status fStat = selectCard(card);
+      hwlib::wait_ms(5);
+      if (fStat == rc522::status::SUCCESS){
+        fStat = authenticateCard(mifare::command::authKA, block, card);
+      } else {
+        stopCrypto();
+        return fStat;
+      }
+      hwlib::wait_ms(5);
+      if (fStat == rc522::status::SUCCESS){
+        fStat = readBlock(block,receiveBuf);
+      } else {
+        stopCrypto();
+        return fStat;
+      }
+      hwlib::wait_ms(5);
+      stopCrypto();
+      hwlib::wait_ms(5);
+      return fStat;
+    }
+
+    template<unsigned int N>
+    rc522::status executeWrite(uint8_t block, std::array<uint8_t, N> sendBuf, mifare::card & card){
+      rc522::status fStat = selectCard(card);
+      hwlib::wait_ms(5);
+      if (fStat == rc522::status::SUCCESS){
+        fStat = authenticateCard(mifare::command::authKA, block, card);
+      } else {
+        stopCrypto();
+        return fStat;
+      }
+      hwlib::wait_ms(5);
+      if (fStat == rc522::status::SUCCESS){
+        fStat = writeBlock(block,sendBuf);
+      } else {
+        stopCrypto();
+        return fStat;
+      }
+      hwlib::wait_ms(5);
+      stopCrypto();
+      hwlib::wait_ms(5);
+      return fStat;
+    }
+
+    bool findCard();
+    rc522::status writeSheetToCard(mifare::card & card,sheet character);
 
     ///\brief
     ///Try a function x times

@@ -4,6 +4,7 @@
 #include <hwlib.hpp>
 #include "rc522.hpp"
 #include "reader.hpp"
+#include "application.hpp"
 
 ///\brief
 ///Output appropriate text to rc522::status
@@ -47,6 +48,6 @@ bool tryWrite(rc522::status & fStatus, rc522 & reader, uint8_t block, std::array
 /// the default value is false.
 void demo(rc522::status & fStatus, rc522 & reader, mifare::card & card, uint8_t block, std::array<uint8_t,16> writeThis, bool showInfo);
 
-
+sheet testSheet();
 
 #endif

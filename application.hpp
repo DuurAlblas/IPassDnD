@@ -58,14 +58,13 @@ namespace dnd {
 };
 
 class sheet{
-  private:
+  public:
     std::array<char,33> name;
     std::array<char,17> hairColor;
     dnd::races race;
     dnd::profesions profesion;
     dnd::allignments allignment;
     std::array<dnd::languages, 2> spokenLanguages;
-  public:
     sheet(
       std::array<char,33> name,
       std::array<char,17> hairColor,

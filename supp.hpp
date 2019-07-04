@@ -174,34 +174,9 @@ void printArrayOfChar(std::array<char,N> a){
   hwlib::cout << hwlib::endl;
 }
 
-// template<unsigned int N>
-// uint16_t arrayOfCharToInt(std::array<char,N> a){
-//   uint16_t returnMe = 0;
-//   uint8_t numbers = 0;
-//   for(auto letter : a){
-//     if (letter != '\0'){
-//       hwlib::cout << "letter : " << letter << hwlib::endl;
-//       hwlib::cout << "getal  : " << (int)letter << hwlib::endl;
-//       numbers++;
-//     }
-//   }
-//   hwlib::cout << "Aantal getallen : " << numbers <<hwlib::endl;
-//   uint16_t multiplier = 1;
-//   if (numbers > 1){
-//     for (uint8_t i = 1; i < numbers; i++){
-//       multiplier *= 10;
-//       hwlib::cout <<"Multiplier : " <<  multiplier << hwlib::endl;
-//     }
-
-//   }
-
-//   for (uint8_t i = 0; i < numbers; i++){
-//     uint16_t temp = (int)a[i];
-//     hwlib::cout << "getal temp " << temp;
-//     returnMe += multiplier * temp;
-//     multiplier /= 10;
-//   }
-//   return returnMe;
-// }
+template<typename T>
+void writeLine(T text){
+  hwlib::cout << text << hwlib::endl;
+}
 
 #endif

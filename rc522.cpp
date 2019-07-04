@@ -283,3 +283,27 @@ rc522::status rc522::authenticateCard(mifare::command comData, uint8_t blockAddr
 void rc522::stopCrypto(){
   unsetRegBitMask(rc522::registers::Status2Reg, 0x08);
 }
+
+bool rc522::findCard(){
+  hwlib::cout << "Looking for a card" << hwlib::endl;
+  for (uint8_t i = 0; i < 10; i++){
+    if (wakeCard(mifare::command::request) == rc522::status::SUCCESS){
+      hwlib::cout << "Welcome new card!" << hwlib::endl;
+      return true;
+      break;
+    } else if (wakeCard(mifare::command::wakeup) == rc522::status::SUCCESS){
+      hwlib::cout << "Welcome old card!" << hwlib::endl;
+      return true;
+      break;
+    }
+    printPatience(3);
+  }
+  return false;
+}
+
+rc522::status rc522::writeSheetToCard(mifare::card & card,sheet character){
+  // rc522::status fStatus;
+  character.printAll();
+
+  return rc522::status::SUCCESS;
+}
