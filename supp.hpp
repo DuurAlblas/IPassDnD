@@ -3,7 +3,7 @@
 // File      : supp.hpp
 // Part of   : RFID library
 // Copyright : Duur Alblas (c) 2019
-// Contact   : d.c.alblas@gmail.com
+// Contact   : duur.alblas@student.hu.nl
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -21,7 +21,8 @@ namespace mifare{
   ///A card class for mifare cards
   ///\details
   ///This class stores data associated with a mifare card.\n
-  ///For now this class supports only the MF1S503yX type of the mifare cards.
+  ///For now this class supports only the MF1S503yX type of the mifare cards,\n
+  ///but is relatively easily expandable.
   class card{
     public:
     ///\brief
@@ -151,6 +152,12 @@ void hexPrintArr(const std::array<uint8_t,N> & a){
   }
   hwlib::cout << hwlib::endl;
 }
+///\brief
+///Ask for user input
+///\details
+///This function is used to ask a user for input and returns a array of chars.\n
+///We stop 1 character short of the array size because the last will be filled with a \o.\n
+///We either continue until N-1 or until the user presses the enter key which results in a '\n' character.\n  
 template<typename T, unsigned int N>
 void askUserToArrayOfChar(T question, std::array<char,N> & response){
   hwlib::cout << question;
@@ -165,7 +172,36 @@ void askUserToArrayOfChar(T question, std::array<char,N> & response){
   }
   hwlib::cout << hwlib::endl;
 }
+///\brief
+///Ask the user for a uint8_t
+///\details
+///This function ask the user to input a uint8_t and return that number.\n
+///The maximum size supported is 255 since that is the max size of a uint8_t.
+template<typename T>
+uint8_t askUserToUint8(T question){
+  hwlib::cout << question ;
+  uint8_t returnMe = 0;
+  for (uint8_t i = 0; i < 3; i++){
+    char tmp ={};
+    hwlib::cin >> tmp;
+    if (i == 0 && tmp != '\n'){
+      returnMe = ((int)tmp-48);
+    } else if (tmp != '\n'){
+      returnMe *= 10;
+      returnMe += ((int)tmp-48);
+    } else {
+      break;
+    }    
+    hwlib::cout << tmp;
+  }
+  hwlib::cout << hwlib::endl;
+  return returnMe;
+}
 
+///\brief
+///Print array of char
+///\details
+///This function print a arrat characters of any size.
 template<unsigned int N>
 void printArrayOfChar(std::array<char,N> a){
   for(auto letter : a){
@@ -174,9 +210,12 @@ void printArrayOfChar(std::array<char,N> a){
   hwlib::cout << hwlib::endl;
 }
 
+///\brief
+///Prints the supplied text
+///\details
+///This function prints the supplied text and goes to the next line.
 template<typename T>
 void writeLine(T text){
   hwlib::cout << text << hwlib::endl;
 }
-
 #endif

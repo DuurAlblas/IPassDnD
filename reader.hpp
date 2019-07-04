@@ -3,7 +3,7 @@
 // File      : reader.hpp
 // Part of   : RFID library
 // Copyright : Duur Alblas (c) 2019
-// Contact   : d.c.alblas@gmail.com
+// Contact   : duur.alblas@student.hu.nl
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -56,6 +56,7 @@ class spiReader {
     ///This enum class contains all the various statusses the function return.
     enum class status{
       ERROR       = 0x00,
+      FAILED_AUTH,
       SUCCESS,
       SUCCESS_NEWC,
       SUCCESS_OLDC,

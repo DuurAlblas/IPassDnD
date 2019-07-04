@@ -1,30 +1,59 @@
+///\mainpage library documentation
+///\section Author
+///Duur Alblas (c) 2019\n
+///duur.alblas@student.hu.nl
+///\section Version
+/// Version 1.0 (last modified 4 july 2019)
+///\section Copyright
+///Boost license
 #include "supp.hpp"
 #include "rc522.hpp"
 #include "tests.hpp"
 #include "application.hpp"
 
+///\brief
+///Create a character sheet
+///\details
+///This function creates a character sheet using the users input.\n
+///It returns a sheet.
+sheet createCharacter(){
+  std::array<char,32> name ={};
+  askUserToArrayOfChar("Character name (Max 30 characters) : ",name);
+  dnd::races race = chooseRace();
+  dnd::profesions profesion = chooseProfesion();
+  dnd::allignments allignment = chooseAllignment();
+  std::array<dnd::languages, 2> spokenLanguages = {};
+  for (uint8_t i = 0; i < 2; i++){
+    spokenLanguages[i] = chooseLanguage();
+  }
+  return sheet(name,race,profesion,allignment,spokenLanguages);
+}
+
+///\brief
+///Execute chosen option
+///\details
+///This function executes the users choice and checks if the users input was acceptable.
 bool executeChoice(char choice,sheet & character,rc522 & reader,rc522::status fStatus, mifare::card card){
   uint8_t tmp = ((int)choice - 48);
-      std::array<uint8_t,18> receive = {};
-      std::array<uint8_t,16> send = {
-        0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
-        0x07,0x06,0x05,0x04,0x03,0x02,0x01,0x00
-      };
   switch(tmp){
     case 0:
+      hwlib::cout << "Showing stored character sheet :" << hwlib::endl;
       character.printAll();
       break;
     case 1:
+      hwlib::cout << "Creating new character sheet :" << hwlib::endl;
+      character = createCharacter();          
       break;
     case 2:
-      if(reader.findCard()){
-        outputStatus(reader.executeRead(0x01,receive,card));
-        hexPrintArr(receive);
+      hwlib::cout << "Reading from card :" << hwlib::endl;
+      if(reader.findCard(true)){
+        outputStatus(reader.readSheetFromCard(card,character));
       }
       break;
     case 3:
-      if(reader.findCard()){
-        outputStatus(reader.executeWrite(0x01,send,card));
+      hwlib::cout << "Writing to card :" << hwlib::endl;
+      if(reader.findCard(true)){
+        outputStatus(reader.writeSheetToCard(card,character));
       }
       break;
     case 4:
@@ -38,6 +67,10 @@ bool executeChoice(char choice,sheet & character,rc522 & reader,rc522::status fS
   return true;
 }
 
+///\brief
+///Main loop of application
+///\details
+///This function gives the users choices and is the main loop of this application.
 void mainLoop(sheet & character,rc522 & reader,rc522::status fStatus, mifare::card card){
   char choice;
   bool run = true;
@@ -45,11 +78,11 @@ void mainLoop(sheet & character,rc522 & reader,rc522::status fStatus, mifare::ca
   while(run){
     writeLine("=============================-----------------");
     writeLine("Choose a option: ");
-    writeLine("Show Sheet           : 0");
-    writeLine("Create sheet         : 1");
-    writeLine("Read sheet from card : 2");
-    writeLine("Write sheet to card  : 3");
-    writeLine("Exit                 : 4");
+    writeLine("Show sheet                               : 0");
+    writeLine("Create new sheet       (overwrites sheet): 1");
+    writeLine("Read sheet from card   (overwrites sheet): 2");
+    writeLine("Write sheet to card                      : 3");
+    writeLine("Exit                                     : 4");
     writeLine("=============================-----------------");
     hwlib::cin >> choice;
     run = executeChoice(choice,character,reader,fStatus,card);

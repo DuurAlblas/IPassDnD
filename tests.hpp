@@ -1,3 +1,15 @@
+// ==========================================================================
+//
+// File      : tests.hpp
+// Part of   : RFID library
+// Copyright : Duur Alblas (c) 2019
+// Contact   : duur.alblas@student.hu.nl
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// ==========================================================================
 #ifndef TESTS_HPP
 #define TESTS_HPP
 
@@ -48,6 +60,11 @@ bool tryWrite(rc522::status & fStatus, rc522 & reader, uint8_t block, std::array
 /// the default value is false.
 void demo(rc522::status & fStatus, rc522 & reader, mifare::card & card, uint8_t block, std::array<uint8_t,16> writeThis, bool showInfo);
 
+///\brief
+///Test function to fill sheet
+///\details
+///This function fill a sheet with some predefined data.\n
+///Returns a sheet.
 sheet testSheet();
 
 #endif

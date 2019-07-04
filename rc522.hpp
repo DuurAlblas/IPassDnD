@@ -3,7 +3,7 @@
 // File      : rc522.hpp
 // Part of   : RFID library
 // Copyright : Duur Alblas (c) 2019
-// Contact   : d.c.alblas@gmail.com
+// Contact   : duur.alblas@student.hu.nl
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -411,7 +411,7 @@ class rc522 : public spiReader {
         setRegBitMask(rc522::registers::BitFramingReg, 0x80); // start communication transceive
       }
 
-  // opdelen in kleinere functions ivm leesbaarheid , groeperen low prio
+      // TODO opdelen in kleinere functions ivm leesbaarheid , groeperen low prio
       // Wait for a response or time out
       uint16_t i;
       for (i = 2000; i > 0; i--) {
@@ -600,10 +600,18 @@ class rc522 : public spiReader {
       return cardTransceive(bufSendData,bufReceive);
     }
 
+    ///\brief
+    ///Complete read from mifare card
+    ///\details
+    ///This function performs all the necessary steps for a read from a mifare block.\n
+    ///First we select the card using the selectCard() function.\n
+    ///Next we authenticate for the block we want to read using the authenticateCard() function.\n
+    ///Then we read from the block using the readBlock() function and we use the stopCrypto() function to safely exit the function.\n
+    ///We wait occasionally wait for 5 ms because the card needs some time to respond to our commands.\n
+    ///We return a rc522::status, rc522::status::SUCCESS means we successfully read.
     template<unsigned int N>
     rc522::status executeRead(uint8_t block, std::array<uint8_t, N> & receiveBuf, mifare::card & card){
       rc522::status fStat = selectCard(card);
-      hwlib::wait_ms(5);
       if (fStat == rc522::status::SUCCESS){
         fStat = authenticateCard(mifare::command::authKA, block, card);
       } else {
@@ -619,10 +627,18 @@ class rc522 : public spiReader {
       }
       hwlib::wait_ms(5);
       stopCrypto();
-      hwlib::wait_ms(5);
       return fStat;
     }
 
+    ///\brief
+    ///Complete write to mifare card
+    ///\details
+    ///This function performs all the necessary steps for a write to a mifare block.\n
+    ///First we select the card using the selectCard() function.\n
+    ///Next we authenticate for the block we want to write to using the authenticateCard() function.\n
+    ///Then we write to the block using the writeBlock() function and we use the stopCrypto() function to safely exit the function.\n
+    ///We wait occasionally wait for 5 ms because the card needs some time to respond to our commands.
+    ///We return a rc522::status, rc522::status::SUCCESS means we successfully wrote.
     template<unsigned int N>
     rc522::status executeWrite(uint8_t block, std::array<uint8_t, N> sendBuf, mifare::card & card){
       rc522::status fStat = selectCard(card);
@@ -642,12 +658,32 @@ class rc522 : public spiReader {
       }
       hwlib::wait_ms(5);
       stopCrypto();
-      hwlib::wait_ms(5);
       return fStat;
     }
 
-    bool findCard();
+    ///\brief
+    ///Find mifare card and wake it up
+    ///\details
+    ///This function tries to find a mifare card in the vicinity.\n
+    ///It tries to send a REQA and a WUPA 10 times before stopping and returning false.\n
+    ///On a successfull wake up it returns true.
+    bool findCard(bool showInfo);
+    ///\brief
+    ///Write sheet to mifare card
+    ///\details
+    ///This function writes a complete sheet to the mifare card.\n
+    ///You need to supply a mifare::card and a sheet containg the data to write.\n
+    ///Using the executeWrite() function we write data and check the returned rc522::status.\n
+    ///On a successfull write of the sheet we return rc522::status::SUCCESS.
     rc522::status writeSheetToCard(mifare::card & card,sheet character);
+    ///\brief
+    ///Read sheet from mifare card
+    ///\details
+    ///This function reads a complete sheet from the mifare card.\n
+    ///You need to supply a mifare::card and a sheet to write the data to.\n
+    ///Using the executeRead() function we read data and check the returned rc522::status.\n
+    ///On a successfull read of the sheet we return rc522::status::SUCCESS.   
+    rc522::status readSheetFromCard(mifare::card & card,sheet & character);
 
     ///\brief
     ///Try a function x times

@@ -284,26 +284,102 @@ void rc522::stopCrypto(){
   unsetRegBitMask(rc522::registers::Status2Reg, 0x08);
 }
 
-bool rc522::findCard(){
-  hwlib::cout << "Looking for a card" << hwlib::endl;
+bool rc522::findCard(bool showInfo = false){
+  if(showInfo){hwlib::cout << "Looking for a card" << hwlib::endl;}
   for (uint8_t i = 0; i < 10; i++){
     if (wakeCard(mifare::command::request) == rc522::status::SUCCESS){
-      hwlib::cout << "Welcome new card!" << hwlib::endl;
+      if(showInfo){hwlib::cout << "Welcome new card!" << hwlib::endl;}
       return true;
       break;
     } else if (wakeCard(mifare::command::wakeup) == rc522::status::SUCCESS){
-      hwlib::cout << "Welcome old card!" << hwlib::endl;
+      if(showInfo){hwlib::cout << "Welcome old card!" << hwlib::endl;}
       return true;
       break;
     }
-    printPatience(3);
+    if(showInfo){printPatience(3);}
   }
   return false;
 }
 
 rc522::status rc522::writeSheetToCard(mifare::card & card,sheet character){
-  // rc522::status fStatus;
-  character.printAll();
+  rc522::status fStatus = executeWrite(0x04,character.getMostToArrayUint(),card);
+  if(fStatus != rc522::status::SUCCESS){
+    return fStatus;
+  }
+  std::array<uint8_t,32> fullName = character.getNameToArrayUint();
+  std::array<uint8_t,16> firstHalf = {};
+  std::array<uint8_t,16> secondHalf = {};
 
-  return rc522::status::SUCCESS;
+  std::copy(
+    begin(fullName),
+    std::next(begin(fullName),15),
+    begin(firstHalf)
+  );
+  std::copy(
+    std::next(begin(fullName),16),
+    end(fullName),
+    begin(secondHalf)
+  );
+  hwlib::wait_ms(5);
+  if(findCard()){
+    fStatus = executeWrite(0x01,firstHalf,card);
+    if (fStatus != rc522::status::SUCCESS){
+      return fStatus;
+    }
+  }
+  hwlib::wait_ms(5);
+  if(findCard()){
+    fStatus = executeWrite(0x02,secondHalf,card);
+    if (fStatus != rc522::status::SUCCESS){
+      return fStatus;
+    }
+  }
+  return fStatus;
+}
+
+rc522::status rc522::readSheetFromCard(mifare::card & card,sheet & character){
+  std::array<uint8_t,32> fullName = {};
+  std::array<uint8_t,16> mostData = {};
+  std::array<uint8_t,18> inclCRC = {};
+  rc522::status fStatus = executeRead(0x04,inclCRC,card);
+    if(fStatus != rc522::status::SUCCESS){
+    return fStatus;
+  }
+  std::array<uint8_t,18> firstHalf = {};
+  std::array<uint8_t,18> secondHalf = {};
+  hwlib::wait_ms(5);
+  if(findCard()){
+    fStatus = executeRead(0x01,firstHalf,card);
+    if(fStatus != rc522::status::SUCCESS){
+      return fStatus;
+    }
+  }
+  hwlib::wait_ms(5);
+  if(findCard()){
+    fStatus = executeRead(0x02,secondHalf,card);
+    if(fStatus != rc522::status::SUCCESS){
+      return fStatus;
+    }
+  }
+  std::copy(
+    begin(firstHalf),
+    std::prev(end(firstHalf),2),
+    begin(fullName)
+  );
+
+  std::copy(
+    begin(secondHalf),
+    std::prev(end(secondHalf),2),
+    std::next(begin(fullName),16)
+  );
+
+  std::copy(
+    begin(inclCRC),
+    std::prev(end(inclCRC),2),
+    begin(mostData)
+  );
+
+  character.setMostFromArrayUint(mostData);
+  character.setNameFromArrayUint(fullName);
+  return fStatus;
 }
