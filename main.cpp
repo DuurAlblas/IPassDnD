@@ -1,8 +1,10 @@
 #include "supp.hpp"
 #include "rc522.hpp"
-#include "deco.hpp"
 
-//A function that test whether i can read/write to/from registers
+///\brief
+///Output appropriate text to rc522::status
+///\default
+///This function prints out text that is appropriate for the received rc522::status.
 void outputStatus(rc522::status recStatus){
   switch (recStatus){
   case rc522::status::SUCCESS:
@@ -38,6 +40,87 @@ void outputStatus(rc522::status recStatus){
   }
 }
 
+///\brief
+/// A small demo
+///\default
+///This function reads a block from a mifare card then writes supplied data to that block and then reads it again.\n
+///You need to supply a rc522::status, \n
+///next you need to supply a mifare::card and a uint8_t value for the block you wish to write to.\n
+///you also need to supply a array with uint8_t values with a size of 16.
+///You can also supply a bool, if the bool is true then this function will print text that shows what is happening,\n
+/// the default value is false.
+void demo(rc522::status & fStatus, rc522 & reader, mifare::card & card, uint8_t block, std::array<uint8_t,16> writeThis, bool showInfo = false){
+  bool isSelected = false;
+  bool isAuthenticated = false;
+  bool isWritten = false;
+
+  if(showInfo){hwlib::cout << "Try to select the card" << hwlib::endl;}
+  fStatus = reader.tryFunction([&]{
+    return reader.selectCard( card );
+  });
+  if (fStatus == rc522::status::SUCCESS ) {
+    if(showInfo){
+      hwlib::cout << "UID: ";
+      hexPrintArr(card.uid);
+    }
+    isSelected = true;
+  }
+  if(showInfo){outputStatus(fStatus);}
+
+  if (isSelected){
+    fStatus = reader.tryFunction([&]{
+      return reader.authenticateCard(mifare::command::authKA, block, card);
+    });
+    if(showInfo){hwlib::cout << "Try to authenticate the card" << hwlib::endl;}
+    if (fStatus == rc522::status::SUCCESS){
+      isAuthenticated = true;
+    }
+    if(showInfo){outputStatus(fStatus);}
+  }
+
+  if (isAuthenticated){
+    if(showInfo){hwlib::cout << "Try to read from card" << hwlib::endl;}
+    std::array<uint8_t,18> bufReceive = {};
+    fStatus = reader.tryFunction([&]{
+      return reader.readBlock(block,bufReceive);
+    });
+    if (fStatus == rc522::status::SUCCESS && showInfo){
+      hwlib::cout << "Read : " << hwlib::endl;
+      hexPrintArr(bufReceive);
+    }
+    outputStatus(fStatus);
+  }
+
+  if (isAuthenticated){
+    if(showInfo){hwlib::cout << "Try to write to card" << hwlib::endl;}
+
+    fStatus = reader.tryFunction([&]{
+      return reader.writeBlock(block,writeThis);
+    });
+    if (fStatus == rc522::status::SUCCESS){
+      isWritten = true;
+    }
+    if(showInfo){outputStatus(fStatus);}
+  }
+
+  if (isWritten){
+    if(showInfo){hwlib::cout << "Try to read from card" << hwlib::endl;}
+    std::array<uint8_t,18> bufReceive = {};
+    fStatus = reader.tryFunction([&]{
+      return reader.readBlock(block,bufReceive);
+    });
+    if (fStatus == rc522::status::SUCCESS && showInfo){
+      hwlib::cout << "Read : " << hwlib::endl;
+      hexPrintArr(bufReceive);
+    }
+    if(showInfo){outputStatus(fStatus);}
+
+    if (isAuthenticated){
+      reader.stopCrypto();
+    }
+  }
+}
+
 int main(){
   // Wait so hwlib::cout works
   hwlib::wait_ms(500);
@@ -50,9 +133,6 @@ int main(){
   auto nss = hwlib::target::pin_out(hwlib::target::pins::d11);
 
   rc522 newReader = rc522(nss,spiBus);
-  bool isSelected = false;
-  bool isAuthenticated = false;
-  bool isWritten = false;
   rc522::status fStatus;
   mifare::card currentCard =  mifare::card();
 
@@ -76,74 +156,14 @@ int main(){
     }
     printPatience(5);
   }
-
-
-  hwlib::cout << "Try to select the card" << hwlib::endl;
-  fStatus = newReader.tryFunction([&]{
-    return newReader.selectCard( currentCard );
-  });
-  if (fStatus == rc522::status::SUCCESS ) {
-    isSelected = true;
-  }
-  outputStatus(fStatus);
-
-
-  if (isSelected){
-    fStatus = newReader.tryFunction([&]{
-      return newReader.authenticateCard(mifare::command::authKA, 0x01, currentCard);
-    });
-    hwlib::cout << "Try to authenticate the card" << hwlib::endl;
-    if (fStatus == rc522::status::SUCCESS){
-      isAuthenticated = true;
-    }
-    outputStatus(fStatus);
-  }
-
-  if (isAuthenticated){
-    hwlib::cout << "Try to read from card" << hwlib::endl;
-    std::array<uint8_t,18> bufReceive = {};
-    fStatus = newReader.tryFunction([&]{
-      return newReader.readBlock(0x01,bufReceive);
-    });
-    if (fStatus == rc522::status::SUCCESS){
-      hexPrintArr(currentCard.uid);
-      hexPrintArr(bufReceive);
-    }
-    outputStatus(fStatus);
-  }
-
-  if (isAuthenticated){
-    hwlib::cout << "Try to write to card" << hwlib::endl;
-    std::array<uint8_t,16> bufSend = {
-      0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
-      0x07,0x06,0x05,0x04,0x03,0x02,0x01,0x00
+  std::array<uint8_t,16> bufSend = {
+      0x07,0x06,0x05,0x04,0x03,0x02,0x01,0x00,
+      0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07
     };
-    fStatus = newReader.tryFunction([&]{
-      return newReader.writeBlock(0x01,bufSend);
-    });
-    if (fStatus == rc522::status::SUCCESS){
-      isWritten = true;
-    }
-    outputStatus(fStatus);
-  }
-
-  if (isWritten){
-    hwlib::cout << "Try to read from card" << hwlib::endl;
-    std::array<uint8_t,18> bufReceive = {};
-    fStatus = newReader.tryFunction([&]{
-      return newReader.readBlock(0x01,bufReceive);
-    });
-    if (fStatus == rc522::status::SUCCESS){
-      hexPrintArr(bufReceive);
-    }
-    outputStatus(fStatus);
-  }
+  uint8_t block = 0x01;
+  demo(fStatus,newReader,currentCard,block,bufSend,true);
 
   // read manufactor block
-
-  if (isAuthenticated){
-    newReader.stopCrypto();
-  }
   hwlib::cout << "End of main" << hwlib::endl;
   return 0;
 }

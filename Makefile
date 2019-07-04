@@ -9,10 +9,10 @@
 #############################################################################
 
 # source files in this project (main.cpp is automatically assumed)
-SOURCES := supp.cpp reader.cpp rc522.cpp deco.cpp
+SOURCES := supp.cpp reader.cpp rc522.cpp
 
 # header files in this project
-HEADERS := supp.hpp reader.hpp rc522.hpp deco.hpp
+HEADERS := supp.hpp reader.hpp rc522.hpp
 
 # other places to look for files for this project
 SEARCH  :=
