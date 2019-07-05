@@ -6,6 +6,7 @@
 /// Version 1.0 (last modified 4 july 2019)
 ///\section Copyright
 ///Boost license
+///All D&D related references belong to Wizards of the Coast LLC
 #include "supp.hpp"
 #include "rc522.hpp"
 #include "tests.hpp"
@@ -42,7 +43,7 @@ bool executeChoice(char choice,sheet & character,rc522 & reader,rc522::status fS
       break;
     case 1:
       hwlib::cout << "Creating new character sheet :" << hwlib::endl;
-      character = createCharacter();          
+      character = createCharacter();
       break;
     case 2:
       hwlib::cout << "Reading from card :" << hwlib::endl;
