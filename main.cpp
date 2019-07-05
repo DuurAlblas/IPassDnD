@@ -3,7 +3,7 @@
 ///Duur Alblas (c) 2019\n
 ///duur.alblas@student.hu.nl
 ///\section Version
-/// Version 1.0 (last modified 4 july 2019)
+/// Version 1.0 (last modified 5 july 2019)
 ///\section Copyright
 ///Boost license
 ///All D&D related references belong to Wizards of the Coast LLC
