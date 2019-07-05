@@ -1,0 +1,4 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classspiReader.html" title="spiReader ADT class " alt="" coords="5,5,87,32"/>
+<area shape="rect" id="node2" href="$classrc522.html" title="rc522 chip class inherits from spiReader " alt="" coords="135,5,189,32"/>
+</map>

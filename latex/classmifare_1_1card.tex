@@ -1,0 +1,88 @@
+\hypertarget{classmifare_1_1card}{}\section{mifare\+:\+:card Class Reference}
+\label{classmifare_1_1card}\index{mifare\+::card@{mifare\+::card}}
+
+
+A card class for mifare cards.  
+
+
+
+
+{\ttfamily \#include $<$supp.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classmifare_1_1card_add87ee9228a95ef57e6778e837a5fa68}\label{classmifare_1_1card_add87ee9228a95ef57e6778e837a5fa68}} 
+\hyperlink{classmifare_1_1card_add87ee9228a95ef57e6778e837a5fa68}{card} (std\+::array$<$ uint8\+\_\+t, 4 $>$ \hyperlink{classmifare_1_1card_a0f97900bf64b956ac9f9622671aa4f74}{uid}, std\+::array$<$ uint8\+\_\+t, 6 $>$ \hyperlink{classmifare_1_1card_a9d6bb609c82ca6fa65a79e83656db964}{keyA}, std\+::array$<$ uint8\+\_\+t, 6 $>$ \hyperlink{classmifare_1_1card_ae99191bf1a9478b61f4b0043c6e0d7bf}{keyB}, uint8\+\_\+t \hyperlink{classmifare_1_1card_a3283a205a271075bd6e4b0bea3f015cb}{max\+Blocks})
+\begin{DoxyCompactList}\small\item\em A constructor with some default values  This constructor can be called without supplying all the parameters because default values have been supplied. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classmifare_1_1card_aff06c5ecc67800474ee8f3e76d4bf1f4}\label{classmifare_1_1card_aff06c5ecc67800474ee8f3e76d4bf1f4}} 
+\hyperlink{classmifare_1_1card_aff06c5ecc67800474ee8f3e76d4bf1f4}{card} ()
+\begin{DoxyCompactList}\small\item\em Default constructor  This constructor doesn\textquotesingle{}t need any input and only has default values. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::array$<$ uint8\+\_\+t, 4 $>$ \hyperlink{classmifare_1_1card_a0f97900bf64b956ac9f9622671aa4f74}{uid}
+\begin{DoxyCompactList}\small\item\em A array for the U\+ID (N\+U\+ID) \end{DoxyCompactList}\item 
+std\+::array$<$ uint8\+\_\+t, 6 $>$ \hyperlink{classmifare_1_1card_a9d6bb609c82ca6fa65a79e83656db964}{keyA}
+\begin{DoxyCompactList}\small\item\em A array for Key A. \end{DoxyCompactList}\item 
+std\+::array$<$ uint8\+\_\+t, 6 $>$ \hyperlink{classmifare_1_1card_ae99191bf1a9478b61f4b0043c6e0d7bf}{keyB}
+\begin{DoxyCompactList}\small\item\em A array for Key B. \end{DoxyCompactList}\item 
+uint8\+\_\+t \hyperlink{classmifare_1_1card_a3283a205a271075bd6e4b0bea3f015cb}{max\+Blocks}
+\begin{DoxyCompactList}\small\item\em The maximum amount of blocks available. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A card class for mifare cards. 
+
+This class stores data associated with a mifare card.~\newline
+For now this class supports only the M\+F1\+S503yX type of the mifare cards,~\newline
+but is relatively easily expandable. 
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classmifare_1_1card_a9d6bb609c82ca6fa65a79e83656db964}\label{classmifare_1_1card_a9d6bb609c82ca6fa65a79e83656db964}} 
+\index{mifare\+::card@{mifare\+::card}!keyA@{keyA}}
+\index{keyA@{keyA}!mifare\+::card@{mifare\+::card}}
+\subsubsection{\texorpdfstring{keyA}{keyA}}
+{\footnotesize\ttfamily std\+::array$<$uint8\+\_\+t,6$>$ mifare\+::card\+::keyA}
+
+
+
+A array for Key A. 
+
+We store Key A in this array with a maximum size of 6 bytes. \mbox{\Hypertarget{classmifare_1_1card_ae99191bf1a9478b61f4b0043c6e0d7bf}\label{classmifare_1_1card_ae99191bf1a9478b61f4b0043c6e0d7bf}} 
+\index{mifare\+::card@{mifare\+::card}!keyB@{keyB}}
+\index{keyB@{keyB}!mifare\+::card@{mifare\+::card}}
+\subsubsection{\texorpdfstring{keyB}{keyB}}
+{\footnotesize\ttfamily std\+::array$<$uint8\+\_\+t,6$>$ mifare\+::card\+::keyB}
+
+
+
+A array for Key B. 
+
+We store Key B in this array with a maximum size of 6 bytes. \mbox{\Hypertarget{classmifare_1_1card_a3283a205a271075bd6e4b0bea3f015cb}\label{classmifare_1_1card_a3283a205a271075bd6e4b0bea3f015cb}} 
+\index{mifare\+::card@{mifare\+::card}!max\+Blocks@{max\+Blocks}}
+\index{max\+Blocks@{max\+Blocks}!mifare\+::card@{mifare\+::card}}
+\subsubsection{\texorpdfstring{max\+Blocks}{maxBlocks}}
+{\footnotesize\ttfamily uint8\+\_\+t mifare\+::card\+::max\+Blocks}
+
+
+
+The maximum amount of blocks available. 
+
+We store the value of the maximum amount of avaiable blocks here.~\newline
+Because we only support the M\+F1\+S503yX max\+Blocks is 64 by default. \mbox{\Hypertarget{classmifare_1_1card_a0f97900bf64b956ac9f9622671aa4f74}\label{classmifare_1_1card_a0f97900bf64b956ac9f9622671aa4f74}} 
+\index{mifare\+::card@{mifare\+::card}!uid@{uid}}
+\index{uid@{uid}!mifare\+::card@{mifare\+::card}}
+\subsubsection{\texorpdfstring{uid}{uid}}
+{\footnotesize\ttfamily std\+::array$<$uint8\+\_\+t,4$>$ mifare\+::card\+::uid}
+
+
+
+A array for the U\+ID (N\+U\+ID) 
+
+We store the U\+ID (N\+U\+ID in the case of M\+F1\+S503yX) with a maximum size of 4 bytes. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+supp.\+hpp\item 
+supp.\+cpp\end{DoxyCompactItemize}

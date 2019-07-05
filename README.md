@@ -1,6 +1,6 @@
 # Character Card
 
-Author : Duur Alblas (c) 2019 
+Author : Duur Alblas (c) 2019
 duur.alblas@student.hu.nl
 
 This Library contains support for a RC522 chip and a MIFARE 1K card version MF1S503yX.
@@ -15,6 +15,6 @@ Version 1.0 (last modified 5 july 2019)
 
 section Copyright
 
-Boost license
+Boost license (See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 All D&D related references belong to Wizards of the Coast LLC

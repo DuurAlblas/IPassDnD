@@ -1,0 +1,113 @@
+\hypertarget{classspiReader}{}\section{spi\+Reader Class Reference}
+\label{classspiReader}\index{spi\+Reader@{spi\+Reader}}
+
+
+\hyperlink{classspiReader}{spi\+Reader} A\+DT class  
+
+
+
+
+{\ttfamily \#include $<$reader.\+hpp$>$}
+
+
+
+Inheritance diagram for spi\+Reader\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=141pt]{classspiReader__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{classspiReader_a4bcf984823c38cf4841ebf619e788790}{status} \{ \newline
+{\bfseries E\+R\+R\+OR} = 0x00, 
+{\bfseries F\+A\+I\+L\+E\+D\+\_\+\+A\+U\+TH}, 
+{\bfseries S\+U\+C\+C\+E\+SS}, 
+{\bfseries S\+U\+C\+C\+E\+S\+S\+\_\+\+N\+E\+WC}, 
+\newline
+{\bfseries S\+U\+C\+C\+E\+S\+S\+\_\+\+O\+L\+DC}, 
+{\bfseries T\+I\+M\+E\+O\+U\+T\+C\+OM}, 
+{\bfseries T\+I\+M\+E\+O\+U\+T\+D\+EV}, 
+{\bfseries T\+I\+M\+E\+O\+UT}, 
+\newline
+{\bfseries N\+O\+\_\+\+S\+P\+A\+CE}, 
+{\bfseries C\+R\+C\+\_\+\+E\+R\+R\+OR}, 
+{\bfseries C\+R\+C\+\_\+\+S\+U\+C\+C\+E\+SS}, 
+{\bfseries R\+E\+A\+DY}
+ \}\begin{DoxyCompactList}\small\item\em A status enum class. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classspiReader_af8eca236eb5cfe4e806f0151227e42b4}{spi\+Reader} (hwlib\+::target\+::pin\+\_\+out \&nss\+Input, hwlib\+::spi\+\_\+bus\+\_\+bit\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso \&spi\+Bus\+Input)
+\begin{DoxyCompactList}\small\item\em The default constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+hwlib\+::target\+::pin\+\_\+out \& \hyperlink{classspiReader_a2a241a80ce921c4df38b3080d839850f}{nss}
+\begin{DoxyCompactList}\small\item\em A nss hwlib pin\+\_\+out by ref. \end{DoxyCompactList}\item 
+hwlib\+::spi\+\_\+bus\+\_\+bit\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso \hyperlink{classspiReader_adb87e7c8ca2a11337b67fe8efce50262}{spi\+Bus}
+\begin{DoxyCompactList}\small\item\em A spi\+Bus hwlib spi\+\_\+bus\+\_\+bit\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classspiReader}{spi\+Reader} A\+DT class 
+
+A A\+DT class for a reader that implements S\+PI, built using hwlib./n You need to supply a hwlib pin\+\_\+out for the nss pin,/n you also has to supply a hwlib spi\+\_\+bus\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso bus for the spi\+Bus./n You also has to define the read and write funcions when you inherit from this class. 
+
+\subsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{classspiReader_a4bcf984823c38cf4841ebf619e788790}\label{classspiReader_a4bcf984823c38cf4841ebf619e788790}} 
+\index{spi\+Reader@{spi\+Reader}!status@{status}}
+\index{status@{status}!spi\+Reader@{spi\+Reader}}
+\subsubsection{\texorpdfstring{status}{status}}
+{\footnotesize\ttfamily enum \hyperlink{classspiReader_a4bcf984823c38cf4841ebf619e788790}{spi\+Reader\+::status}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+A status enum class. 
+
+This enum class contains all the various statusses the function return. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classspiReader_af8eca236eb5cfe4e806f0151227e42b4}\label{classspiReader_af8eca236eb5cfe4e806f0151227e42b4}} 
+\index{spi\+Reader@{spi\+Reader}!spi\+Reader@{spi\+Reader}}
+\index{spi\+Reader@{spi\+Reader}!spi\+Reader@{spi\+Reader}}
+\subsubsection{\texorpdfstring{spi\+Reader()}{spiReader()}}
+{\footnotesize\ttfamily spi\+Reader\+::spi\+Reader (\begin{DoxyParamCaption}\item[{hwlib\+::target\+::pin\+\_\+out \&}]{nss\+Input,  }\item[{hwlib\+::spi\+\_\+bus\+\_\+bit\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso \&}]{spi\+Bus\+Input }\end{DoxyParamCaption})}
+
+
+
+The default constructor. 
+
+You need to supply the nss pin\+\_\+out pin and the spi\+Bus spi\+\_\+bus\+\_\+bit\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso/n since there are no default values. 
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classspiReader_a2a241a80ce921c4df38b3080d839850f}\label{classspiReader_a2a241a80ce921c4df38b3080d839850f}} 
+\index{spi\+Reader@{spi\+Reader}!nss@{nss}}
+\index{nss@{nss}!spi\+Reader@{spi\+Reader}}
+\subsubsection{\texorpdfstring{nss}{nss}}
+{\footnotesize\ttfamily hwlib\+::target\+::pin\+\_\+out\& spi\+Reader\+::nss\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+A nss hwlib pin\+\_\+out by ref. 
+
+A nss hwlib pin\+\_\+out pin used with reference./n The signal nss is used for to be able to send datastreams./n \mbox{\Hypertarget{classspiReader_adb87e7c8ca2a11337b67fe8efce50262}\label{classspiReader_adb87e7c8ca2a11337b67fe8efce50262}} 
+\index{spi\+Reader@{spi\+Reader}!spi\+Bus@{spi\+Bus}}
+\index{spi\+Bus@{spi\+Bus}!spi\+Reader@{spi\+Reader}}
+\subsubsection{\texorpdfstring{spi\+Bus}{spiBus}}
+{\footnotesize\ttfamily hwlib\+::spi\+\_\+bus\+\_\+bit\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso spi\+Reader\+::spi\+Bus\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+A spi\+Bus hwlib spi\+\_\+bus\+\_\+bit\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso. 
+
+A spi\+Bus hwlib spi\+\_\+bus\+\_\+bit\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso,/n the user has to create a spi\+\_\+bus\+\_\+bit\+\_\+banged\+\_\+sclk\+\_\+mosi\+\_\+miso containing a sclk, mosi and miso,/n and supply it to this class. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+reader.\+hpp\item 
+reader.\+cpp\end{DoxyCompactItemize}

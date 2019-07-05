@@ -1,0 +1,148 @@
+\hypertarget{classsheet}{}\section{sheet Class Reference}
+\label{classsheet}\index{sheet@{sheet}}
+
+
+A class to contain character sheet data.  
+
+
+
+
+{\ttfamily \#include $<$application.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classsheet_afae0c2b257d19526ca0482e3e246ec30}{sheet} (std\+::array$<$ char, 32 $>$ name, dnd\+::races race, dnd\+::profesions profesion, dnd\+::allignments allignment, std\+::array$<$ dnd\+::languages, 2 $>$ spoken\+Languages)
+\begin{DoxyCompactList}\small\item\em The default constructor. \end{DoxyCompactList}\item 
+void \hyperlink{classsheet_a84f442ba9c1fe19f04bc1e8eed30c8c4}{print\+Race} (dnd\+::races race)
+\begin{DoxyCompactList}\small\item\em Print race. \end{DoxyCompactList}\item 
+void \hyperlink{classsheet_aeaee0f027d25a9076ebabad9bcb51a40}{print\+Profesion} (dnd\+::profesions profesion)
+\begin{DoxyCompactList}\small\item\em Print profesion. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsheet_aa0e0036c9943ca69c4e05e0a1c03b1e7}\label{classsheet_aa0e0036c9943ca69c4e05e0a1c03b1e7}} 
+void \hyperlink{classsheet_aa0e0036c9943ca69c4e05e0a1c03b1e7}{print\+Allignment} (dnd\+::allignments allignment)
+\begin{DoxyCompactList}\small\item\em Print allignment. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsheet_a52a971ba4d8131fec3c5d13fd27cf692}\label{classsheet_a52a971ba4d8131fec3c5d13fd27cf692}} 
+void \hyperlink{classsheet_a52a971ba4d8131fec3c5d13fd27cf692}{print\+Language} (dnd\+::languages language)
+\begin{DoxyCompactList}\small\item\em Print language. \end{DoxyCompactList}\item 
+void \hyperlink{classsheet_a39028f2eb082d2b50bfa05873767de52}{print\+Name} ()
+\begin{DoxyCompactList}\small\item\em Print stored name. \end{DoxyCompactList}\item 
+void \hyperlink{classsheet_a9689c670d509517bfe17c1b8941aaaaf}{print\+All} ()
+\begin{DoxyCompactList}\small\item\em Print all data in class. \end{DoxyCompactList}\item 
+std\+::array$<$ uint8\+\_\+t, 16 $>$ \hyperlink{classsheet_a4a9a029a5e816b0c4cb75441f231e2de}{get\+Most\+To\+Array\+Uint} ()
+\begin{DoxyCompactList}\small\item\em Returns class data in uint8\+\_\+t array. \end{DoxyCompactList}\item 
+std\+::array$<$ uint8\+\_\+t, 32 $>$ \hyperlink{classsheet_a83692af2c0ec0962a3c92e679a8f8648}{get\+Name\+To\+Array\+Uint} ()
+\begin{DoxyCompactList}\small\item\em Return name in uint8\+\_\+t array. \end{DoxyCompactList}\item 
+void \hyperlink{classsheet_a64845c424dc2e36b3d8268cac104d4b3}{set\+Most\+From\+Array\+Uint} (std\+::array$<$ uint8\+\_\+t, 16 $>$ info)
+\begin{DoxyCompactList}\small\item\em Set class data from uint8\+\_\+t array. \end{DoxyCompactList}\item 
+void \hyperlink{classsheet_a3d9fc4c4f4cdd28f6d9accffb0037136}{set\+Name\+From\+Array\+Uint} (std\+::array$<$ uint8\+\_\+t, 32 $>$ info)
+\begin{DoxyCompactList}\small\item\em Set class name from uint8\+\_\+t array. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A class to contain character sheet data. 
+
+This class stores data associated with a character sheet.~\newline
+This class is easily expandable to support more stats and dnd enums. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classsheet_afae0c2b257d19526ca0482e3e246ec30}\label{classsheet_afae0c2b257d19526ca0482e3e246ec30}} 
+\index{sheet@{sheet}!sheet@{sheet}}
+\index{sheet@{sheet}!sheet@{sheet}}
+\subsubsection{\texorpdfstring{sheet()}{sheet()}}
+{\footnotesize\ttfamily sheet\+::sheet (\begin{DoxyParamCaption}\item[{std\+::array$<$ char, 32 $>$}]{name,  }\item[{dnd\+::races}]{race,  }\item[{dnd\+::profesions}]{profesion,  }\item[{dnd\+::allignments}]{allignment,  }\item[{std\+::array$<$ dnd\+::languages, 2 $>$}]{spoken\+Languages }\end{DoxyParamCaption})}
+
+
+
+The default constructor. 
+
+This is the default constructor, you need to supply everything since there are no default values. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classsheet_a4a9a029a5e816b0c4cb75441f231e2de}\label{classsheet_a4a9a029a5e816b0c4cb75441f231e2de}} 
+\index{sheet@{sheet}!get\+Most\+To\+Array\+Uint@{get\+Most\+To\+Array\+Uint}}
+\index{get\+Most\+To\+Array\+Uint@{get\+Most\+To\+Array\+Uint}!sheet@{sheet}}
+\subsubsection{\texorpdfstring{get\+Most\+To\+Array\+Uint()}{getMostToArrayUint()}}
+{\footnotesize\ttfamily std\+::array$<$ uint8\+\_\+t, 16 $>$ sheet\+::get\+Most\+To\+Array\+Uint (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns class data in uint8\+\_\+t array. 
+
+This function stores all the data except for the name in a array of type uint8\+\_\+t and a exact size of 16 elements,~\newline
+and then returns the array. \mbox{\Hypertarget{classsheet_a83692af2c0ec0962a3c92e679a8f8648}\label{classsheet_a83692af2c0ec0962a3c92e679a8f8648}} 
+\index{sheet@{sheet}!get\+Name\+To\+Array\+Uint@{get\+Name\+To\+Array\+Uint}}
+\index{get\+Name\+To\+Array\+Uint@{get\+Name\+To\+Array\+Uint}!sheet@{sheet}}
+\subsubsection{\texorpdfstring{get\+Name\+To\+Array\+Uint()}{getNameToArrayUint()}}
+{\footnotesize\ttfamily std\+::array$<$ uint8\+\_\+t, 32 $>$ sheet\+::get\+Name\+To\+Array\+Uint (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Return name in uint8\+\_\+t array. 
+
+This function stores the name in a array of type uint8\+\_\+t and a exact size of 32 elements,~\newline
+and then returns the array. \mbox{\Hypertarget{classsheet_a9689c670d509517bfe17c1b8941aaaaf}\label{classsheet_a9689c670d509517bfe17c1b8941aaaaf}} 
+\index{sheet@{sheet}!print\+All@{print\+All}}
+\index{print\+All@{print\+All}!sheet@{sheet}}
+\subsubsection{\texorpdfstring{print\+All()}{printAll()}}
+{\footnotesize\ttfamily void sheet\+::print\+All (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Print all data in class. 
+
+This function uses all the aforementioned print funcionts to print all the data currently stored in the class. \mbox{\Hypertarget{classsheet_a39028f2eb082d2b50bfa05873767de52}\label{classsheet_a39028f2eb082d2b50bfa05873767de52}} 
+\index{sheet@{sheet}!print\+Name@{print\+Name}}
+\index{print\+Name@{print\+Name}!sheet@{sheet}}
+\subsubsection{\texorpdfstring{print\+Name()}{printName()}}
+{\footnotesize\ttfamily void sheet\+::print\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Print stored name. 
+
+This function prints the name currently stored in the class. \mbox{\Hypertarget{classsheet_aeaee0f027d25a9076ebabad9bcb51a40}\label{classsheet_aeaee0f027d25a9076ebabad9bcb51a40}} 
+\index{sheet@{sheet}!print\+Profesion@{print\+Profesion}}
+\index{print\+Profesion@{print\+Profesion}!sheet@{sheet}}
+\subsubsection{\texorpdfstring{print\+Profesion()}{printProfesion()}}
+{\footnotesize\ttfamily void sheet\+::print\+Profesion (\begin{DoxyParamCaption}\item[{dnd\+::profesions}]{profesion }\end{DoxyParamCaption})}
+
+
+
+Print profesion. 
+
+This function prints some text relative to the supplied profesion. \mbox{\Hypertarget{classsheet_a84f442ba9c1fe19f04bc1e8eed30c8c4}\label{classsheet_a84f442ba9c1fe19f04bc1e8eed30c8c4}} 
+\index{sheet@{sheet}!print\+Race@{print\+Race}}
+\index{print\+Race@{print\+Race}!sheet@{sheet}}
+\subsubsection{\texorpdfstring{print\+Race()}{printRace()}}
+{\footnotesize\ttfamily void sheet\+::print\+Race (\begin{DoxyParamCaption}\item[{dnd\+::races}]{race }\end{DoxyParamCaption})}
+
+
+
+Print race. 
+
+This function prints some text relative to the supplied race. \mbox{\Hypertarget{classsheet_a64845c424dc2e36b3d8268cac104d4b3}\label{classsheet_a64845c424dc2e36b3d8268cac104d4b3}} 
+\index{sheet@{sheet}!set\+Most\+From\+Array\+Uint@{set\+Most\+From\+Array\+Uint}}
+\index{set\+Most\+From\+Array\+Uint@{set\+Most\+From\+Array\+Uint}!sheet@{sheet}}
+\subsubsection{\texorpdfstring{set\+Most\+From\+Array\+Uint()}{setMostFromArrayUint()}}
+{\footnotesize\ttfamily void sheet\+::set\+Most\+From\+Array\+Uint (\begin{DoxyParamCaption}\item[{std\+::array$<$ uint8\+\_\+t, 16 $>$}]{info }\end{DoxyParamCaption})}
+
+
+
+Set class data from uint8\+\_\+t array. 
+
+This function sets most of the classes data using a array of type uint8\+\_\+t with a size of 16. \mbox{\Hypertarget{classsheet_a3d9fc4c4f4cdd28f6d9accffb0037136}\label{classsheet_a3d9fc4c4f4cdd28f6d9accffb0037136}} 
+\index{sheet@{sheet}!set\+Name\+From\+Array\+Uint@{set\+Name\+From\+Array\+Uint}}
+\index{set\+Name\+From\+Array\+Uint@{set\+Name\+From\+Array\+Uint}!sheet@{sheet}}
+\subsubsection{\texorpdfstring{set\+Name\+From\+Array\+Uint()}{setNameFromArrayUint()}}
+{\footnotesize\ttfamily void sheet\+::set\+Name\+From\+Array\+Uint (\begin{DoxyParamCaption}\item[{std\+::array$<$ uint8\+\_\+t, 32 $>$}]{info }\end{DoxyParamCaption})}
+
+
+
+Set class name from uint8\+\_\+t array. 
+
+This function sets the classes name using a array of type uint8\+\_\+t with a size of 32. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+application.\+hpp\item 
+application.\+cpp\end{DoxyCompactItemize}
